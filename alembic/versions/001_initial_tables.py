@@ -17,15 +17,55 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # إنشاء الـ enums أولاً — IF NOT EXISTS يتجاهل الموجود
-    op.execute("CREATE TYPE IF NOT EXISTS userrole AS ENUM ('user', 'admin')")
-    op.execute("CREATE TYPE IF NOT EXISTS userstatus AS ENUM ('active', 'suspended', 'banned', 'frozen')")
-    op.execute("CREATE TYPE IF NOT EXISTS discounttype AS ENUM ('percentage', 'free_days', 'free_plan')")
-    op.execute("CREATE TYPE IF NOT EXISTS plantype AS ENUM ('free_trial', 'monthly', 'semi_annual', 'annual', 'custom')")
-    op.execute("CREATE TYPE IF NOT EXISTS subscriptionstatus AS ENUM ('active', 'expired', 'cancelled', 'paused')")
-    op.execute("CREATE TYPE IF NOT EXISTS replytype AS ENUM ('default', 'custom', 'random')")
-    op.execute("CREATE TYPE IF NOT EXISTS dmcondition AS ENUM ('always', 'keywords')")
-    op.execute("CREATE TYPE IF NOT EXISTS logstatus AS ENUM ('pending', 'replied', 'dm_sent', 'failed', 'skipped')")
+       # إنشاء الـ enums مع تجاهل الموجود
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE userrole AS ENUM ('user', 'admin');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE userstatus AS ENUM ('active', 'suspended', 'banned', 'frozen');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE discounttype AS ENUM ('percentage', 'free_days', 'free_plan');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE plantype AS ENUM ('free_trial', 'monthly', 'semi_annual', 'annual', 'custom');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE subscriptionstatus AS ENUM ('active', 'expired', 'cancelled', 'paused');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE replytype AS ENUM ('default', 'custom', 'random');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE dmcondition AS ENUM ('always', 'keywords');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE logstatus AS ENUM ('pending', 'replied', 'dm_sent', 'failed', 'skipped');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$;
+    """)
 
     # --- جدول المستخدمين ---
     op.create_table(
